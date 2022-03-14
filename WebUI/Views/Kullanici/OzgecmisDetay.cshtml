@@ -1,0 +1,455 @@
+﻿@using Entities
+@model KullaniciCvDetayViewModel
+<div class="row">
+    <div class="col-12 p-0">
+        <div class="container-fluid" style="min-width:1200px;">
+            <div class="cv-detay-header">
+                <div>
+                    <div class="float-left text-white"><h3>@Model.kullaniciCv.cvAdi</h3></div>
+                    <div class="float-right">
+                        <div class="text-white  tum-firmalar-btn">Tüm Firmalar</div>
+                        <div class="text-white rounded-circle cv-detay-btn"><i class="fa fa-ellipsis-h"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cv-detay-content">
+                <!-- İletişim Bilgileri -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">İletişim Bilgileri</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div class="d-flex">
+                            <div class="w-20">
+                                <figure>
+                                    @if (String.IsNullOrEmpty(Model.kullanici.fotograf))
+                                    {
+                                        <img class="rounded-circle" src="~/images/user.png">
+                                    }
+                                    else
+                                    {
+                                        <img class="rounded-circle" src="data:image/jpg;base64,@(Model.kullanici.fotograf)">
+                                    }
+                                </figure>
+                            </div>
+                            <div class="w-80">
+                                <div>
+                                    <div class="d-flex mb-3">
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Ad*</small>
+                                                <input class="cv-detay-input" id="ad" value="@Model.kullanici.ad" />
+                                            </div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Soyad*</small>
+                                                <input class="cv-detay-input" id="soyad" value="@Model.kullanici.soyad" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Eposta Adresi*</small>
+                                                <input class="cv-detay-input" id="eposta" value="@Model.kullanici.eposta" />
+                                            </div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Unvan</small>
+                                                <input class="cv-detay-input" id="unvan" value="@Model.kullanici.unvan" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Telefon*</small>
+                                                <input class="cv-detay-input" type="tel" id="telefon" maxlength="11" placeholder="05XXXXXXXXX" pattern="[0]{1}-[0-9]{10}" value="@Model.kullanici.telefon" />
+                                            </div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Şehir*</small>
+                                                <select class="cv-detay-input" asp-for="kullanici.sehirId" asp-items="@(new SelectList(Model.sehirler, nameof(SysSehir.id), nameof(SysSehir.ad)))"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Doğum Tarihi*</small>
+                                                <input type="date" asp-for="kullanici.dogumTarihi" class="cv-detay-input" />
+                                            </div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Web Sayfam</small>
+                                                <input class="cv-detay-input" id="kisiselWebSite" value="@Model.kullanici.kisiselWebSite" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-100 p-1">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2" onclick="IletisimBilgiDuzenle()">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Özel Bilgiler -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">Özel Bilgiler</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div>
+                            <div class="d-flex mb-3">
+                                <div class="w-50">
+                                    <div class="form-group">
+                                        <small class="mb-0 font-weight-bold d-inline">Cinsiyetim*</small>
+                                        <select class="cv-detay-input">
+                                            @if (Model.kullanici.cinsiyet == true)
+                                            {
+                                                <option value="0">Kadın</option>
+                                                <option value="1" selected>Erkek</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="0" selected>Kadın</option>
+                                                <option value="1">Erkek</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="w-50">
+                                    <div class="form-group">
+                                        <small class="mb-0 font-weight-bold d-inline">Sürücü Belgesi Sınıfı</small>
+                                        <select class="cv-detay-input ehliyet-tur" asp-for="kullaniciEhliyet" multiple asp-items="@(new SelectList(Model.tumEhliyetler, nameof(SysEhliyetTur.id), nameof(SysEhliyetTur.ad)))"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <div class="w-50">
+                                    <div class="form-group">
+                                        <small class="mb-0 font-weight-bold d-inline">Askerlik Durumu*</small>
+                                        <select class="cv-detay-input" asp-for="kullanici.askerlikDurum" asp-items="@(new SelectList(Model.askerlikDurumlari, nameof(SysAskerlikDurum.id), nameof(SysAskerlikDurum.ad)))"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-100 p-1">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Özet Bilgi -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">Özet Bilgi</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div>
+                            <textarea class="form-control w-100" rows="4">@Model.kullaniciCv.ozetBilgi</textarea>
+                        </div>
+                        <div class="w-100 p-1 mt-2">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İş Deneyimleri -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">İş Deneyimleri <button class="btn btn-sm btn-outline-purple float-right"><i class="fa fa-plus"></i> Yeni deneyim ekle</button></div>
+                    @{ int i = 0;
+                        foreach (var item in Model.kullaniciDeneyim)
+                        {
+                            <div class="cv-detay-row-content pb-5 border-bottom">
+                                <div class="d-flex">
+                                    <div class="w-15">
+                                        <figure class="firm-logo"><img src="//aday-asset.mncdn.com/img/firma-logosuz.png"></figure>
+                                        <div class="w-100 text-center"><span class="text-center">3 ay</span></div>
+
+                                    </div>
+                                    <div class="w-85 d-flex">
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Firma Adı*:</small>
+                                                <input class="cv-detay-input" value="@item.firmaAdi">
+                                            </div>
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Pozisyon*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciDeneyim.ToList()[i].pozisyonId" asp-items="@(new SelectList(Model.tumPozisyonlar, nameof(SysPozisyon.id), nameof(SysPozisyon.ad)))"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Başlangıç Tarihi*:</small>
+                                                <input type="date" asp-for="kullaniciDeneyim.ToList()[i].baslangicTarihi" class="cv-detay-input" />
+                                            </div>
+                                            <div class="form-group pl-4">
+                                                <input class="form-check-input" type="checkbox" id="flexCheckChecked" @(item.devamDurum ? "checked" : "")>
+                                                <label class="form-check-label" for="flexCheckChecked">
+                                                    Hala Çalışıyorum
+                                                </label>
+                                            </div>
+                                            @if (item.devamDurum == false)
+                                            {
+                                                <div class="form-group">
+                                                    <small class="mb-0 font-weight-bold d-inline">Bitiş Tarihi:</small>
+                                                    <input type="date" asp-for="kullaniciDeneyim.ToList()[i].bitisTarihi" class="cv-detay-input" />
+                                                </div>
+                                            }
+
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Firma Sektörü*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciDeneyim.ToList()[i].firmaSektorId" asp-items="@(new SelectList(Model.tumSektorler, nameof(SysSektor.id), nameof(SysSektor.ad)))"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Çalışma Şekli*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciDeneyim.ToList()[i].calismaTur" asp-items="@(new SelectList(Model.tumCalismaTurleri, nameof(SysCalismaTur.id), nameof(SysCalismaTur.ad)))"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Şehir*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciDeneyim.ToList()[i].sehirId" asp-items="@(new SelectList(Model.sehirler, nameof(SysSehir.id), nameof(SysSehir.ad)))"></select>
+                                            </div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">İş Tanımı:</small>
+                                                <textarea class="form-control w-100" rows="18">@item.isTanim</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-100 p-1 mt-2">
+                                    <div class="float-right">
+                                        <button class="btn btn-purple r-2">Kaydet</button>
+                                    </div>
+                                </div>
+                            </div>
+                            i += 1;
+                        }
+                    }
+                </div>
+
+                <!-- Eğitim Bilgileri -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">Eğitim Bilgileri <button class="btn btn-sm btn-outline-purple float-right"><i class="fa fa-plus"></i> Yeni eğitim bilgisi ekle</button></div>
+                    @{ int j = 0;
+                        foreach (var item in Model.kullaniciEgitim)
+                        {
+                            <div class="cv-detay-row-content pb-5 border-bottom">
+                                <div class="d-flex">
+                                    <div class="w-15">
+                                        <figure class="firm-logo"><img src="//aday-asset.mncdn.com/img/university-default.png"></figure>
+                                        <div class="w-50 text-center"><span class="text-center">3 ay</span></div>
+                                    </div>
+                                    <div class="w-85">
+                                        <div class="w-100">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Eğitim Durumu*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciEgitim.ToList()[j].egitimDurum" asp-items="@(new SelectList(Model.tumEgitimdurumlari, nameof(SysEgitimDurum.id), nameof(SysEgitimDurum.ad)))"></select>
+                                            </div>
+                                        </div>
+                                        <div class="w-100">
+                                            <div class="form-group">
+                                                <small class="mb-0 font-weight-bold d-inline">Başlangıç Tarihi*:</small>
+                                                <input type="date" asp-for="kullaniciEgitim.ToList()[j].baslangicTarihi" class="cv-detay-input" />
+                                            </div>
+                                            <div class="form-group pl-4">
+                                                <input class="form-check-input" type="checkbox" id="flexCheckChecked2" @(item.devamDurum ? "checked" : "")>
+                                                <label class="form-check-label" for="flexCheckChecked2">
+                                                    Devam Ediyorum
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="@(item.devamDurum ? "d-none":"d-flex")">
+                                            <div class="w-50">
+                                                <div class="form-group">
+                                                    <small class="mb-0 font-weight-bold d-inline">Bitiş Tarihi:</small>
+                                                    <input type="date" asp-for="kullaniciEgitim.ToList()[j].bitisTarihi" class="cv-detay-input" />
+                                                </div>
+                                            </div>
+                                            <div class="w-50">
+                                                <div class="form-group">
+                                                    <small class="mb-0 font-weight-bold d-inline">Diploma Notu:</small>
+                                                    <input class="cv-detay-input" asp-for="kullaniciEgitim.ToList()[j].diplomaNotu" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="w-50">
+                                                <div class="form-group">
+                                                    <small class="mb-0 font-weight-bold d-inline">Okul:</small>
+                                                    <input class="cv-detay-input" value="@(item.okul)" />
+                                                </div>
+                                            </div>
+                                            <div class="w-50">
+                                                <div class="form-group">
+                                                    <small class="mb-0 font-weight-bold d-inline">Bölüm:</small>
+                                                    <input class="cv-detay-input" value="@(item.bolum)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="form-group w-33">
+                                                <small class="mb-0 font-weight-bold d-inline">Öğretim Türü*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciEgitim.ToList()[j].ogretimTur" asp-items="@(new SelectList(Model.tumOgretimTurleri, nameof(SysOgretimTur.id), nameof(SysOgretimTur.ad)))"></select>
+                                            </div>
+                                            <div class="form-group w-33">
+                                                <small class="mb-0 font-weight-bold d-inline">Öğretim Dili*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciEgitim.ToList()[j].ogretimDil" asp-items="@(new SelectList(Model.tumDiller, nameof(SysDil.id), nameof(SysDil.ad)))"></select>
+                                            </div>
+                                            <div class="form-group w-33">
+                                                <small class="mb-0 font-weight-bold d-inline">Burs Türü*:</small>
+                                                <select class="cv-detay-input" asp-for="kullaniciEgitim.ToList()[j].bursTur" asp-items="@(new SelectList(Model.tumBursTurleri, nameof(SysBursTur.id), nameof(SysBursTur.ad)))"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-100">
+                                            <textarea class="form-control" rows="4">@item.aciklama</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-100 p-1 mt-2">
+                                    <div class="float-right">
+                                        <button class="btn btn-purple r-2">Kaydet</button>
+                                    </div>
+                                </div>
+                            </div>
+                            j += 1;
+                        }
+                    }
+                </div>
+
+                <!-- Yabancı Dil -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">Yabancı Dil</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div class="d-flex">
+                            <div class="w-33">
+                                <div class="form-group">
+                                    <small class="mb-0 font-weight-bold d-inline">Yabancı Dil</small>
+                                    <select class="cv-detay-input ehliyet-tur" asp-for="kullaniciDil" multiple asp-items="@(new SelectList(Model.tumDiller, nameof(SysDil.id), nameof(SysDil.ad)))"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-100 p-1 mt-2">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bilgisayar Bilgisi -->
+                <div class="cv-detay-row">
+                    <div class="cv-detay-row-header">Bilgisayar Bilgisi</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div>
+                            <textarea class="form-control w-100" rows="4">@Model.kullaniciCv.bilgisayarBilgisi</textarea>
+                        </div>
+                        <div class="w-100 p-1 mt-2">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yetenekler -->
+                <div class="cv-detay-row mb-5">
+                    <div class="cv-detay-row-header">Yetenekler</div>
+                    <div class="cv-detay-row-content pb-5">
+                        <div class="d-flex">
+                            <div class="w-33">
+                                <div class="form-group">
+                                    <small class="mb-0 font-weight-bold d-inline">Yetenekler:</small>
+                                    <select class="cv-detay-input cv-yetenek" asp-for="cvYetenek" multiple asp-items="@(new SelectList(Model.tumYetenekler, nameof(SysYetenek.id), nameof(SysYetenek.ad)))"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-100 p-1 mt-2">
+                            <div class="float-right">
+                                <button class="btn btn-purple r-2">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.ehliyet-tur').SumoSelect();
+
+    $('.cv-yetenek').SumoSelect({ search: true, searchText: 'Yetenek gir' });
+
+    function IletisimBilgiDuzenle() {
+        let ad = $("#ad").val();
+        let soyad = $("#soyad").val();
+        let eposta = $("#eposta").val();
+        let unvan = $("#unvan").val();
+        let telefon = $("#telefon").val();
+        let sehir = $("#kullanici_sehirId").val();
+        let dogumTarihi = $("#kullanici_dogumTarihi").val();
+        let kisiselWebSite = $("#kisiselWebSite").val();
+
+        if (ad.length > 2) {
+            if (soyad.length > 1) {
+                if (eposta.length > 0 && eposta.includes("@@")) {
+                    if (telefon.length == 11 && telefon.substring(0, 2) == "05") {
+                        if (sehir > 0) {
+                            if (dogumTarihi) {
+
+                                let formData = new FormData();
+                                formData.append("ad", ad);
+                                formData.append("soyad", soyad);
+                                formData.append("eposta", eposta);
+                                formData.append("unvan", unvan);
+                                formData.append("telefon", telefon);
+                                formData.append("sehirId", sehir);
+                                formData.append("dogumTarihi", dogumTarihi);
+                                formData.append("kisiselWebSite", kisiselWebSite);
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Kullanici/IletisimBilgiDuzenle",
+                                    data: formData,
+                                    contentType: false,
+                                    processData: false,
+                                    success: function (response) {
+                                        alert(response.message);
+                                    },
+                                    error: function () {
+                                        alert("Beklenmedik bir hata oluştu!");
+                                    }
+                                });
+                            }
+                            else {
+                                alert("Doğum tarihi zorunlu.");
+                            }
+                        }
+                        else {
+                            alert("Şehir zorunlu.");
+                        }
+                    }
+                    else {
+                        alert("Telefon 05XXXXXXXXX formatında ve 11 karakter olmalı.");
+                    }
+                }
+                else {
+                    alert("Eposta uygun formatta değil.");
+                }
+            }
+            else {
+                alert("Soyad en az 1 karakter olmalı.");
+            }
+        }
+        else {
+            alert("Ad en az 2 karakter olmalı.");
+        }
+    }
+</script>

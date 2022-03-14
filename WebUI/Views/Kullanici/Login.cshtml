@@ -1,0 +1,25 @@
+﻿@model Entities.Kullanici
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form asp-action="Login" asp-antiforgery="true" method="POST">
+    <div class="form-group">
+        <label asp-for="eposta"></label>
+        <input asp-for="eposta" type="email" class="form-control">
+        <span asp-validation-for="eposta" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="sifre"></label>
+        <input asp-for="sifre" type="password" class="form-control">
+        <span asp-validation-for="sifre" class="text-danger"></span>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Beni Hatırla</label>
+    </div>
+    <div class="form-group">
+        <span class="alert alert-danger @(ViewBag.mesaj == null ? "d-none":"")">@ViewBag.mesaj</span>
+    </div>
+    <button type="submit" class="btn btn-purple">Giriş Yap</button>
+</form>

@@ -1,0 +1,179 @@
+﻿@model KullaniciOzgecmisViewModel
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-12" id="solMenuResponse"></div>
+    <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="container-fluid bg-white p-3">
+            <div class="row m-3">
+                <div class="col px-0">
+                    <h4 class="d-inline">Özgeçmişler</h4>
+                    <button class="btn btn-outline-purple float-right" data-toggle="modal" data-target="#cv-olustur"><i class="fa fa-plus"></i> Yeni Özgeçmiş Oluştur</button>
+                </div>
+            </div>
+            <div id="cv-listesi">
+                @foreach (var item in Model.kullaniciCv)
+                {
+                    <div class="row card-ozgecmis m-3">
+                        <div class="col-lg-1 col-2">
+                            <figure>
+                                @if (String.IsNullOrEmpty(Model.fotograf))
+                                {
+                                    <img src="~/images/user.png">
+                                }
+                                else
+                                {
+                                    <img src="data:image/jpg;base64,@Model.fotograf">
+                                }
+                            </figure>
+                        </div>
+                        <div class="col-lg-11 col-10">
+                            <h5>
+                                <a class="baglanti" href="/Kullanici/OzgecmisDetay/@(item.id)">@item.cvAdi</a>
+                            </h5>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="container-fluid bg-white p-3 mt-3">
+            <div class="row m-3">
+                <div class="col px-0">
+                    <h4 class="d-inline">Önyazılar</h4>
+                    <button class="btn btn-outline-purple float-right" data-toggle="modal" data-target="#onyazi-olustur"><i class="fa fa-plus"></i> Yeni Önyazı Ekle</button>
+                </div>
+            </div>
+            <div id="onyazi-listesi">
+                @foreach (var item in Model.kullaniciOnyazi)
+                {
+                    <div class="row card-ozgecmis m-3">
+                        <div class="col">
+                            <a class="baglanti" href="/Kullanici/OnyaziDetay/@(item.id)"><h5>@item.onyaziAdi</h5></a>
+                            <label>@item.aciklama</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cv-olustur" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Özgeçmiş Oluştur</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label class="font-weight-bold mb-0">Özgeçmişine isim ver</label>
+                <label>Özgeçmişine verdiğin isim, şirketler tarafından görülmeyecek.</label>
+                <input type="text" class="form-control input-md" id="ozgecmis-adi" placeholder="Özgeçmiş adı girin" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-purple" onclick="OzgecmisOlustur()">Özgeçmiş Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="onyazi-olustur" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Önyazi Oluştur</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control input-md" id="onyazi-adi" placeholder="Önyazı başlığı girin" />
+                <textarea id="aciklama" class="form-control mt-2" rows="6" placeholder="Bu işe başvurma sebebini ve kariyer planlarını anlatan birkaç cümle yaz."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-purple" onclick="OnyaziOlustur()">Özgeçmiş Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (String.IsNullOrEmpty(Model.fotograf))
+{
+    <input id="kullanici-img" type="hidden" value="~/images/user.png">
+}
+else
+{
+    <input id="kullanici-img" type="hidden" value="data:image/jpg;base64,@Model.fotograf">
+}
+<script>
+    SolMenu("#solMenuResponse", "ozgecmisler");
+
+    function OzgecmisOlustur() {
+        let ozgecmisAdi = $("#ozgecmis-adi").val().trim();
+        if (ozgecmisAdi.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/Kullanici/OzgecmisOlustur",
+                data: {
+                    ozgecmisAdi: ozgecmisAdi
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#cv-olustur").modal("hide");
+                        $("#cv-listesi").append('<div class="row card-ozgecmis m-3">' +
+                            '<div class="col-lg-1 col-2">' +
+                            '<figure><img src="' + $("#kullanici-img").val() + '"></figure>' +
+                            '</div>' +
+                            '<div class="col-lg-11 col-10">' +
+                            '<h5>' +
+                            '<a class="baglanti" href="/Kullanici/OzgecmisDetay/' + response.message + '">' + ozgecmisAdi + '</a>' +
+                            '</h5>' +
+                            '</div>' +
+                            '</div>');
+                        $("#ozgecmis-adi").val("");
+                    }
+                    else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Özgeçmiş Oluşturma Hatası!");
+                }
+            });
+        }
+    }
+
+    function OnyaziOlustur() {
+        let onyaziAdi = $("#onyazi-adi").val().trim();
+        let aciklama = $("#aciklama").val().trim();
+
+        if (onyaziAdi.length > 0 && aciklama.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/Kullanici/OnyaziOlustur",
+                data: {
+                    onyaziAdi: onyaziAdi,
+                    aciklama: aciklama
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#onyazi-olustur").modal("hide");
+                        $("#onyazi-listesi").append('<div class="row card-ozgecmis m-3">' +
+                            '<div class="col">' +
+                            '<a class="class="baglanti" href="/Kullanici/OnyaziDetay/' + response.message + '"><h5>' + onyaziAdi + '</h5></a>' +
+                            '<label>' + aciklama + '</label>' +
+                            '</div></div>');
+                        $("#onyazi-adi").val("");
+                        $("#aciklama").val("");
+                    }
+                    else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Özgeçmiş Oluşturma Hatası!");
+                }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,248 @@
+﻿@using Entities
+@model Kullanici
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-12" id="solMenuResponse"></div>
+    <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="accordion" id="accordionExample">
+            <div class="card mb-3 border-bottom">
+                <div class="card-header bg-white" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link font-weight-bold baglanti" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Kişisel Bilgiler
+                        </button>
+                        <small style="font-size:12px" class="d-block pl-2 mt-0 text-black-50">Ad, soyad, e-posta ve telefon bilgilerini düzenleyebilirsin.</small>
+                    </h2>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Ad*</small>
+                            <input class="form-control input-md" id="ad" value="@Model.ad" onfocusout="adKontrol()" />
+                            <div class="error-validate d-none mesaj">
+                                En az 3 karekter
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Soyad*</small>
+                            <input class="form-control input-md" id="soyad" value="@Model.soyad" onfocusout="soyadKontrol()" />
+                            <div class="error-validate d-none mesaj">
+                                En az 2 karekter
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">E-posta adresi*</small>
+                            <input class="form-control input-md" id="eposta" value="@Model.eposta" onfocusout="epostaKontrol()" />
+                            <div class="error-validate d-none mesaj">
+                                birisi@example.com
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Telefon numarası*</small>
+                            <input class="form-control input-md" type="tel" id="telefon" maxlength="11" value="@Model.telefon" placeholder="05XXXXXXXXX" pattern="[0]{1}-[0-9]{10}" onfocusout="telefonKontrol()">
+                            <div class="error-validate d-none mesaj">
+                                05XXXXXXXXX
+                            </div>
+                        </div>
+                        <button class="btn btn-purple" onclick="KullaniciBilgiDuzenle()">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header bg-white" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link font-weight-bold baglanti collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Şifreyi Değiştir
+                        </button>
+                        <small style="font-size:12px" class="d-block pl-2 mt-0 text-black-50">Şifreni değiştirebilir veya sıfırlayabilirsin.</small>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Eski Şifre*</small>
+                            <input class="form-control input-md" type="password" id="eski-sifre" onfocusout="sifreKontrol('eski-sifre')" placeholder="Eski şifreni gir" />
+                            <div class="error-validate d-none mesaj">
+                                En az 6 karekter
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Yeni Şifre*</small>
+                            <input class="form-control input-md" type="password" id="yeni-sifre" onfocusout="sifreKontrol('yeni-sifre')" placeholder="Yeni şifreni gir" />
+                            <div class="error-validate d-none mesaj">
+                                En az 6 karekter
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <small class="mb-0 font-weight-bold">Yeni Şifre (Tekrar)*</small>
+                            <input class="form-control input-md" type="password" id="yeni-sifre-tekrar" onfocusout="yeniSifreKontrol()" placeholder="Yeni şifreni tekrar gir" />
+                            <div class="error-validate d-none mesaj">
+                                En az 6 karekter
+                            </div>
+                        </div>
+                        <button class="btn btn-purple" onclick="KullaniciSifreDegistir()">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    SolMenu("#solMenuResponse", "ayarlar");
+
+    function KullaniciBilgiDuzenle() {
+        //Ad kontrol
+        let ad = $("#ad").val().trim();
+        if (adKontrol()) {
+
+            //Soyad kontrol
+            let soyad = $("#soyad").val().trim();
+            if (soyadKontrol()) {
+
+                //Eposta kontrol
+                let eposta = $("#eposta").val().trim();
+                if (epostaKontrol()) {
+
+                    //Telefon kontrol
+                    let telefon = $("#telefon").val().trim();
+                    if (telefonKontrol()) {
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Kullanici/KullaniciBilgiDuzenle",
+                            data: {
+                                ad: ad,
+                                soyad: soyad,
+                                eposta: eposta,
+                                telefon: telefon
+                            },
+                            success: function (response) {
+                                alert(response.message);
+                            },
+                            error: function () {
+                                alert("Bilgiler Düzenlenemedi!");
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    function adKontrol() {
+        let ad = $("#ad").val().trim();
+        if (ad.length > 2) {
+            $("#ad~.mesaj").addClass("d-none");
+            return true;
+        }
+        else {
+            $("#ad~.mesaj").removeClass("d-none");
+            return false;
+        }
+    }
+
+    function soyadKontrol() {
+        let soyad = $("#soyad").val().trim();
+        if (soyad.length > 1) {
+            $("#soyad~.mesaj").addClass("d-none");
+            return true;
+        }
+        else {
+            $("#soyad~.mesaj").removeClass("d-none");
+            return false;
+        }
+    }
+
+    function epostaKontrol() {
+        if ($("#eposta").val().trim().includes("@@")) {
+            $("#eposta~.mesaj").addClass("d-none");
+            return true;
+        }
+        else {
+            $("#eposta~.mesaj").removeClass("d-none");
+            return false;
+        }
+    }
+
+    function telefonKontrol() {
+        let telefon = $("#telefon").val().trim();
+        if (telefon.length == 11 && telefon.substring(0, 1) == "0") {
+            $("#telefon~.mesaj").addClass("d-none");
+            return true;
+        }
+        else {
+            $("#telefon~.mesaj").removeClass("d-none");
+            return false;
+        }
+    }
+
+    function sifreKontrol(id) {
+        let sifre = $("#" + id).val().trim();
+        if (sifre.length > 5) {
+            $("#" + id + "~.mesaj").addClass("d-none");
+            return true;
+        }
+        else {
+            $("#" + id + "~.mesaj").removeClass("d-none");
+            return false;
+        }
+    }
+
+    function yeniSifreKontrol() {
+        let sifre = $("#yeni-sifre").val().trim();
+        let sifreTekrar = $("#yeni-sifre-tekrar").val().trim();
+
+        if (sifreTekrar.length > 0) {
+            if (sifre == sifreTekrar) {
+                $("#yeni-sifre-tekrar~.mesaj").addClass("d-none");
+                return true;
+            }
+            else {
+                $("#yeni-sifre-tekrar~.mesaj").removeClass("d-none").html("Şifreler birbiriyle uyuşmuyor");
+                return false;
+            }
+        }
+        else {
+            $("#yeni-sifre-tekrar~.mesaj").removeClass("d-none").html("En az 6 karekter");
+            return false;
+        }
+
+    }
+
+    function KullaniciSifreDegistir() {
+        //Şifre kontrol
+        let eskiSifre = $("#eski-sifre").val().trim();
+        if (sifreKontrol("eski-sifre")) {
+
+            //Yeni şifre kontrol
+            let yeniSifre = $("#yeni-sifre").val().trim();
+            if (sifreKontrol("yeni-sifre")) {
+
+                //Yeni şifre tekrar kontrol
+                if (yeniSifreKontrol("yeni-sifre-tekrar")) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Kullanici/KullaniciSifreDegistir",
+                        data: {
+                            eskiSifre: eskiSifre,
+                            yeniSifre: yeniSifre
+                        },
+                        success: function (response) {
+                            alert(response.message);
+                            if (response.success) {
+                                $("#eski-sifre").val("");
+                                $("#yeni-sifre").val("");
+                                $("#yeni-sifre-tekrar").val("");
+                            }
+                        },
+                        error: function () {
+                            alert("Şifre Değiştirilemedi!");
+                        }
+                    });
+                }
+            }
+        }
+    }
+</script>

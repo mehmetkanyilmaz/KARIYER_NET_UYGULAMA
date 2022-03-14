@@ -1,0 +1,18 @@
+﻿@{
+    Layout = null;
+}
+<div class="list-group">
+    @if (ViewBag.Rol == "Kullanici")
+    {
+        <a href="/Kullanici/Profil" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "profil" ? "active":"")">Profil</a>
+        <a href="/Kullanici/OzGecmis" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "ozgecmisler" ? "active":"")">Öz Geçmişler</a>
+        <a href="/Kullanici/Basvuru" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "basvurular" ? "active":"")">Başvurular</a>
+        <a href="/Kullanici/Ayar" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "ayarlar" ? "active":"")">Ayarlar</a>
+    }
+    else if (ViewBag.Rol == "Firma")
+    {
+        <a href="/Firma/Kurumsal" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "kurumsal" ? "active":"")">Kurumsal</a>
+        <a href="/Firma/VerilenIlan" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "ilanlar" ? "active":"")">Verilen İlanlar</a>
+        <a href="/Firma/Ayar" class="list-group-item text-decoration-none @(ViewBag.SeciliSayfa == "ayarlar" ? "active":"")">Ayarlar</a>
+    }
+</div>
