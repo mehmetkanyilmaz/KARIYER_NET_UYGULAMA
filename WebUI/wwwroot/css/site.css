@@ -124,6 +124,10 @@ body {
     font-weight: bold;
 }
 
+.btn-purple:hover {
+    color: white !important;
+}
+
 .btn-outline-purple {
     border: 1px solid #8316b5;
     color: #6f42c1;
@@ -217,7 +221,7 @@ body {
 }
 
 .cv-detay-row-content:hover{
-    border: 2px dashed rgba(0,0,0,0.2);
+   box-shadow: 0 2px 7px 0 rgb(0 0 0 / 17%);
 }
 
 .w-15 {
@@ -238,6 +242,14 @@ body {
 
 .w-85 {
     width: 85% !important;
+}
+
+.border-radius-7 {
+    border-radius: 7px !important;
+}
+
+.border-radius-20{
+    border-radius:20px;
 }
 
 .cv-detay-input {
